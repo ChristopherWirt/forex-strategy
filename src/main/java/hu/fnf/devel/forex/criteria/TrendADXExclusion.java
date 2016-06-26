@@ -11,39 +11,39 @@ import hu.fnf.devel.forex.utils.Signal;
 
 public class TrendADXExclusion extends OpenExclusionDecorator {
 
-	private int trend;
-	private int limit = 25;
+    private int trend;
+    private int limit = 25;
 
-	public TrendADXExclusion(Criterion criterion, int trend) {
-		super(criterion);
+    public TrendADXExclusion(Criterion criterion, int trend) {
+        super(criterion);
 
-		this.trend = trend;
-	}
+        this.trend = trend;
+    }
 
-	@Override
-	protected void check(Signal challenge) {
-		IIndicators indicators = StateMachine.getInstance().getContext().getIndicators();
-		double adx = 0;
-		try {
-			adx = indicators.adx(challenge.getInstrument(), challenge.getPeriod(), OfferSide.ASK, 13, 1);
-		} catch (JFException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		switch (trend) {
-		case StateMachine.TREND:
-			if (adx < limit) {
-				setExclusion();
-			}
-			break;
-		case StateMachine.CHAOS:
-			if (adx > limit) {
-				setExclusion();
-			}
-		default:
-			break;
-		}
+    @Override
+    protected void check(Signal challenge) {
+        IIndicators indicators = StateMachine.getInstance().getContext().getIndicators();
+        double adx = 0;
+        try {
+            adx = indicators.adx(challenge.getInstrument(), challenge.getPeriod(), OfferSide.ASK, 13, 1);
+        } catch (JFException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        switch (trend) {
+            case StateMachine.TREND:
+                if (adx < limit) {
+                    setExclusion();
+                }
+                break;
+            case StateMachine.CHAOS:
+                if (adx > limit) {
+                    setExclusion();
+                }
+            default:
+                break;
+        }
 
-	}
+    }
 
 }

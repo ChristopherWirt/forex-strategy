@@ -9,21 +9,21 @@ import com.dukascopy.api.JFException;
 
 public class OneStrategyAtTheTimeExclusion extends OpenExclusionDecorator {
 
-	public OneStrategyAtTheTimeExclusion(Criterion criterion) {
-		super(criterion);
-	}
+    public OneStrategyAtTheTimeExclusion(Criterion criterion) {
+        super(criterion);
+    }
 
-	@Override
-	protected void check(Signal challenge) {
-		// no trade if another strategy done an order
-		try {
-			if ( StateMachine.getInstance().getContext().getEngine().getOrders().size() > 0 ) { // TODO
-					setExclusion();
-				}
-		} catch (JFException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @Override
+    protected void check(Signal challenge) {
+        // no trade if another strategy done an order
+        try {
+            if (StateMachine.getInstance().getContext().getEngine().getOrders().size() > 0) { // TODO
+                setExclusion();
+            }
+        } catch (JFException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -14,23 +14,23 @@ import hu.fnf.devel.forex.utils.State;
 
 public class ThreePigsClose extends CloseCriterionDecorator {
 
-	public ThreePigsClose(Criterion criterion) {
-		super(criterion);	
-	}
-	
-	@Override
-	protected double calc(Signal challenge, ITick tick, State actual) {
-		List<IOrder> orders = null;
-		try {
-			orders = StateMachine.getInstance().getContext().getEngine().getOrders();
-		} catch (JFException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if ( orders != null && orders.get(0).getProfitLossInPips() > 16 ) {
-			return this.max;
-		}
-		return 0;
-	}
+    public ThreePigsClose(Criterion criterion) {
+        super(criterion);
+    }
+
+    @Override
+    protected double calc(Signal challenge, ITick tick, State actual) {
+        List<IOrder> orders = null;
+        try {
+            orders = StateMachine.getInstance().getContext().getEngine().getOrders();
+        } catch (JFException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (orders != null && orders.get(0).getProfitLossInPips() > 16) {
+            return this.max;
+        }
+        return 0;
+    }
 
 }

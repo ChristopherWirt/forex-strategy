@@ -13,9 +13,9 @@ import org.junit.Test;
  */
 public class MainTest {
 
-        @Test
-        public void testExecute() throws Exception {
-                Main main = new Main();
-                Main.main( new String[] {MainTest.class.getResource( "config.properties" ).getPath()} );
-        }
+    @Test
+    public void testExecute() throws Exception {
+        Main main = new Main();
+        Main.main(new String[]{MainTest.class.getResource("config.properties").getPath()});
+    }
 }

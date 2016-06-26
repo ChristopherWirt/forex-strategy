@@ -16,125 +16,125 @@ import com.dukascopy.api.OfferSide;
 import com.dukascopy.api.Period;
 
 public class MACDCloseCriterion extends CloseCriterionDecorator {
-	/*
-	 * config
-	 */
-	private double MACDCloseLevel = 2.0;
-	int a = 12;
-	int b = 26;
-	int c = 9;
+    /*
+     * config
+     */
+    private double MACDCloseLevel = 2.0;
+    int a = 12;
+    int b = 26;
+    int c = 9;
 
-	public MACDCloseCriterion(Criterion criterion) {
-		super(criterion);
-	}
+    public MACDCloseCriterion(Criterion criterion) {
+        super(criterion);
+    }
 
-	@Override
-	protected double calc(Signal challenge, ITick tick, State actual) {
-		int maxOrder = 2; // the START#ID order and this
-		if ( StateMachine.getInstance().getContext().getEngine().getType().equals(IEngine.Type.TEST) ) {
-			maxOrder--;
-		}
-		IOrder order = null;
-		try {
-			if (StateMachine.getInstance().getContext().getEngine().getOrders().size() < maxOrder) {
-				return 0;
-			}
-			for (IOrder oIOrder : StateMachine.getInstance().getContext().getEngine().getOrders() ) {
-				if ( oIOrder.getLabel().split("AND")[0].equalsIgnoreCase("MACDSample452State") ) {
-					order = oIOrder;
-				}
-			}
-		} catch (JFException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		if ( order == null ) {
-			// not our order
-			return 0;
-		}
-		
-		IIndicators indicators = StateMachine.getInstance().getContext().getIndicators();
-		try {
-			Period p = Period.valueOf(order.getLabel().split("AND")[1]);
-			Instrument i = order.getInstrument();
+    @Override
+    protected double calc(Signal challenge, ITick tick, State actual) {
+        int maxOrder = 2; // the START#ID order and this
+        if (StateMachine.getInstance().getContext().getEngine().getType().equals(IEngine.Type.TEST)) {
+            maxOrder--;
+        }
+        IOrder order = null;
+        try {
+            if (StateMachine.getInstance().getContext().getEngine().getOrders().size() < maxOrder) {
+                return 0;
+            }
+            for (IOrder oIOrder : StateMachine.getInstance().getContext().getEngine().getOrders()) {
+                if (oIOrder.getLabel().split("AND")[0].equalsIgnoreCase("MACDSample452State")) {
+                    order = oIOrder;
+                }
+            }
+        } catch (JFException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        if (order == null) {
+            // not our order
+            return 0;
+        }
 
-			if (order.isLong()) {
-				/*
+        IIndicators indicators = StateMachine.getInstance().getContext().getIndicators();
+        try {
+            Period p = Period.valueOf(order.getLabel().split("AND")[1]);
+            Instrument i = order.getInstrument();
+
+            if (order.isLong()) {
+                /*
 				 * long Long exit – by execution of the take profit limit, by
 				 * execution of the trailing stop or when MACD crosses its
 				 * Signal Line (MACD is above zero, goes downwards and is
 				 * crossed by the Signal Line going upwards).
 				 */
-				double MacdCurrent[];
-				double MacdPrevious[];
-				double MacdPrevPrev[];
-				double SignalCurrent;
-				double SignalPrevious;
-				double SignalPrevPrev;
+                double MacdCurrent[];
+                double MacdPrevious[];
+                double MacdPrevPrev[];
+                double SignalCurrent;
+                double SignalPrevious;
+                double SignalPrevPrev;
 
-				try {
-					MacdCurrent  = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 0);
-					MacdPrevious = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 1);
-					MacdPrevPrev = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 2);
+                try {
+                    MacdCurrent = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 0);
+                    MacdPrevious = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 1);
+                    MacdPrevPrev = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 2);
 
-					SignalCurrent = MacdCurrent[1];
-					SignalPrevious = MacdPrevious[1];
-					SignalPrevPrev = MacdPrevPrev[1];
+                    SignalCurrent = MacdCurrent[1];
+                    SignalPrevious = MacdPrevious[1];
+                    SignalPrevPrev = MacdPrevPrev[1];
 
-				} catch (JFException e) {
-					throw new JFException("Error during buy calculation.", e);
-				}
+                } catch (JFException e) {
+                    throw new JFException("Error during buy calculation.", e);
+                }
 
-				if (MacdCurrent[0] > 0 && MacdPrevPrev[0] > MacdPrevious[0] && SignalPrevPrev < SignalPrevious
-						&& Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2])) {
-					if (SignalCurrent > 0 && MacdCurrent[0] > (MACDCloseLevel * challenge.getInstrument().getPipValue())) {
-						return this.max;
-					}
-				}
-			} else {
+                if (MacdCurrent[0] > 0 && MacdPrevPrev[0] > MacdPrevious[0] && SignalPrevPrev < SignalPrevious
+                        && Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2])) {
+                    if (SignalCurrent > 0 && MacdCurrent[0] > (MACDCloseLevel * challenge.getInstrument().getPipValue())) {
+                        return this.max;
+                    }
+                }
+            } else {
 				/*
 				 * short
 				 */
-				double MacdCurrent[];
-				double MacdPrevious[];
-				double MacdPrevPrev[];
-				double SignalCurrent;
-				double SignalPrevious;
-				double SignalPrevPrev;
-				try {
-					MacdCurrent = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 0);
-					MacdPrevious = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 1);
-					MacdPrevPrev = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 2);
+                double MacdCurrent[];
+                double MacdPrevious[];
+                double MacdPrevPrev[];
+                double SignalCurrent;
+                double SignalPrevious;
+                double SignalPrevPrev;
+                try {
+                    MacdCurrent = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 0);
+                    MacdPrevious = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 1);
+                    MacdPrevPrev = indicators.macd(i, p, OfferSide.BID, IIndicators.AppliedPrice.CLOSE, a, b, c, 2);
 
-					SignalCurrent = MacdCurrent[1];
-					SignalPrevious = MacdPrevious[1];
-					SignalPrevPrev = MacdPrevPrev[1];
+                    SignalCurrent = MacdCurrent[1];
+                    SignalPrevious = MacdPrevious[1];
+                    SignalPrevPrev = MacdPrevPrev[1];
 
-				} catch (JFException e) {
-					throw new JFException("Error during buy calculation.", e);
-				}
+                } catch (JFException e) {
+                    throw new JFException("Error during buy calculation.", e);
+                }
 
-				if (MacdCurrent[0] < 0) {
-					if (MacdPrevPrev[0] < MacdPrevious[0]) {
-						if (SignalPrevPrev > SignalPrevious) {
-							if (Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2])) {
-								if (SignalCurrent < 0 && MacdCurrent[0] < -1 * (MACDCloseLevel * challenge.getInstrument().getPipValue())) {
-									logger.debug("MacdCurrent[0] < 0				:	" + MacdCurrent[2] + " < 0" );
-									logger.debug("MacdPrevPrev[0] < MacdPrevious[0]	:	" + MacdPrevPrev[0] + "<" + MacdPrevious[0] );
-									logger.debug("SignalPrevPrev > SignalPrevious   :	" + 	SignalPrevPrev +  "<" + SignalPrevious );
-									logger.debug("Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2]");
-									logger.debug(SignalPrevPrev + " > " + SignalPrevious);
-									return this.max;
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
+                if (MacdCurrent[0] < 0) {
+                    if (MacdPrevPrev[0] < MacdPrevious[0]) {
+                        if (SignalPrevPrev > SignalPrevious) {
+                            if (Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2])) {
+                                if (SignalCurrent < 0 && MacdCurrent[0] < -1 * (MACDCloseLevel * challenge.getInstrument().getPipValue())) {
+                                    logger.debug("MacdCurrent[0] < 0				:	" + MacdCurrent[2] + " < 0");
+                                    logger.debug("MacdPrevPrev[0] < MacdPrevious[0]	:	" + MacdPrevPrev[0] + "<" + MacdPrevious[0]);
+                                    logger.debug("SignalPrevPrev > SignalPrevious   :	" + SignalPrevPrev + "<" + SignalPrevious);
+                                    logger.debug("Math.signum(MacdCurrent[2]) != Math.signum(MacdPrevious[2]");
+                                    logger.debug(SignalPrevPrev + " > " + SignalPrevious);
+                                    return this.max;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
 }

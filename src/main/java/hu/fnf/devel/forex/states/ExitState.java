@@ -13,68 +13,68 @@ import hu.fnf.devel.forex.utils.Signal;
 import hu.fnf.devel.forex.utils.State;
 
 public class ExitState extends State {
-	private static final Logger logger = Logger.getLogger(ExitState.class);
-	/*
-	 * singleton
-	 */
-	private static ExitState instance;
+    private static final Logger logger = Logger.getLogger(ExitState.class);
+    /*
+     * singleton
+     */
+    private static ExitState instance;
 
-	public synchronized static ExitState getInstance() {
-		if (instance == null) {
-			instance = new ExitState();
-		}
-		return instance;
-	}
-	
-	private ExitState() {
-		super("ExitState");
-	}
+    public synchronized static ExitState getInstance() {
+        if (instance == null) {
+            instance = new ExitState();
+        }
+        return instance;
+    }
 
-	@Override
-	public boolean onArriving() {
-		logger.warn("Robot will exit in a minute!");
-		(new Thread((new Runnable() {
+    private ExitState() {
+        super("ExitState");
+    }
 
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(60000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.exit(0);
-			}
-		}))).start();
-		return super.onArriving();
-	}
+    @Override
+    public boolean onArriving() {
+        logger.warn("Robot will exit in a minute!");
+        (new Thread((new Runnable() {
 
-	@Override
-	public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                System.exit(0);
+            }
+        }))).start();
+        return super.onArriving();
+    }
 
-		Signal challenge = new Signal(instrument, getAmount(), StateMachine.CLOSE);
-		double max = 1.0;
-		double act = 0;
-		if ( actual instanceof PanicState ) {
-			if ( ((PanicState)actual).canIExit() ) {
-				act = max;
-			}
-		}
-		challenge.setValue(act/max);
-		return challenge;
-	}
+    @Override
+    public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
 
-	@Override
-	public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
-			throws JFException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        Signal challenge = new Signal(instrument, getAmount(), StateMachine.CLOSE);
+        double max = 1.0;
+        double act = 0;
+        if (actual instanceof PanicState) {
+            if (((PanicState) actual).canIExit()) {
+                act = max;
+            }
+        }
+        challenge.setValue(act / max);
+        return challenge;
+    }
 
-	@Override
-	public double getAmount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
+            throws JFException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public double getAmount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
 }

@@ -17,77 +17,77 @@ import com.dukascopy.api.JFException;
 import com.dukascopy.api.Period;
 
 public class MACDSample452State extends State {
-	/*
-	 * singleton
-	 */
-	private final double amount = 0.01;
-	private static MACDSample452State instance;
+    /*
+     * singleton
+     */
+    private final double amount = 0.01;
+    private static MACDSample452State instance;
 
-	public synchronized static MACDSample452State getInstance() {
-		if (instance == null) {
-			instance = new MACDSample452State();
-		}
-		return instance;
-	}
+    public synchronized static MACDSample452State getInstance() {
+        if (instance == null) {
+            instance = new MACDSample452State();
+        }
+        return instance;
+    }
 
-	// private int MATrendPeriod = 26;
+    // private int MATrendPeriod = 26;
 
-	private MACDSample452State() {
-		super("MACDSample452State");
-		/*
+    private MACDSample452State() {
+        super("MACDSample452State");
+        /*
 		 * config
 		 */
-		this.instruments.add(Instrument.GBPJPY);
-		this.instruments.add(Instrument.EURUSD);
+        this.instruments.add(Instrument.GBPJPY);
+        this.instruments.add(Instrument.EURUSD);
 
-		this.periods.add(Period.ONE_HOUR);
+        this.periods.add(Period.ONE_HOUR);
 
-		open = new MarketOpenTimeExclusion(open);
-		int days = 3;
-		int trades = 2;
-		open = new BadLuckPanicExclusion(open, days, trades);
-		open = new TrendADXExclusion(open, StateMachine.TREND);
-		open = new MACDOpenCriterion(open);
+        open = new MarketOpenTimeExclusion(open);
+        int days = 3;
+        int trades = 2;
+        open = new BadLuckPanicExclusion(open, days, trades);
+        open = new TrendADXExclusion(open, StateMachine.TREND);
+        open = new MACDOpenCriterion(open);
 
-		close = new MoneyManagementExclusion(close);
-		close = new MACDCloseCriterion(close);
+        close = new MoneyManagementExclusion(close);
+        close = new MACDCloseCriterion(close);
 
-	}
+    }
 
-	public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
-		if (instruments.contains(instrument) ) {
+    public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
+        if (instruments.contains(instrument)) {
 			/*
 			 * close strategy
 			 */
-			close.reset();
-			Signal challenge = new Signal(instrument, getAmount(), StateMachine.CLOSE);
-			double max = close.getMax();
-			double act = close.calcProbability(challenge, tick, actual);
-			challenge.setValue(act / max);
-			return challenge;
-		}
-		return null;
-	}
+            close.reset();
+            Signal challenge = new Signal(instrument, getAmount(), StateMachine.CLOSE);
+            double max = close.getMax();
+            double act = close.calcProbability(challenge, tick, actual);
+            challenge.setValue(act / max);
+            return challenge;
+        }
+        return null;
+    }
 
-	public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
-			throws JFException {
-		if (instruments.contains(instrument) && periods.contains(period)) {
+    public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
+            throws JFException {
+        if (instruments.contains(instrument) && periods.contains(period)) {
 			/*
 			 * open strategy
 			 */
-			open.reset();
-			Signal challenge = new Signal(instrument, getAmount(), StateMachine.OPEN);
-			challenge.setPeriod(period);
-			double max = open.getMax();
-			double act = open.calcProbability(challenge, period, askBar, bidBar, actual);
-			challenge.setValue(act/max);
-			return challenge;
-		}
-		return null;
-	}
+            open.reset();
+            Signal challenge = new Signal(instrument, getAmount(), StateMachine.OPEN);
+            challenge.setPeriod(period);
+            double max = open.getMax();
+            double act = open.calcProbability(challenge, period, askBar, bidBar, actual);
+            challenge.setValue(act / max);
+            return challenge;
+        }
+        return null;
+    }
 
-	@Override
-	public double getAmount() {
-		return this.amount;
-	}
+    @Override
+    public double getAmount() {
+        return this.amount;
+    }
 }

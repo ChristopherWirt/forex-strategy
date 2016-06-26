@@ -16,100 +16,100 @@ import hu.fnf.devel.forex.utils.Signal;
 import hu.fnf.devel.forex.utils.State;
 
 public class PanicState extends State {
-	private static final Logger logger = Logger.getLogger(PanicState.class);
-	/*
-	 * singleton
-	 */
-	private static PanicState instance;
+    private static final Logger logger = Logger.getLogger(PanicState.class);
+    /*
+     * singleton
+     */
+    private static PanicState instance;
 
-	public synchronized static PanicState getInstance() {
-		if (instance == null) {
-			instance = new PanicState();
-		}
-		return instance;
-	}
+    public synchronized static PanicState getInstance() {
+        if (instance == null) {
+            instance = new PanicState();
+        }
+        return instance;
+    }
 
-	private PanicState() {
-		super("PanicState");
-	}
-	
-	@Override
-	public boolean onArriving() {
-		try {
-			Main.sendMail("PANIC!", "I am in Panic state!");
-		} catch (RobotException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return super.onArriving();
-	}
-	
-	@Override
-	public boolean onLeaving() {
-		try {
-			Main.sendMail("Information during Panic", gatherInformation());
-		} catch (RobotException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return super.onLeaving();
-	}
+    private PanicState() {
+        super("PanicState");
+    }
 
-	private String gatherInformation() {
-		return "no information";
-	}
+    @Override
+    public boolean onArriving() {
+        try {
+            Main.sendMail("PANIC!", "I am in Panic state!");
+        } catch (RobotException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.onArriving();
+    }
 
-	@Override
-	public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
-		if (actual.getInstruments().contains(instrument)) {
-			if (StateMachine.getInstance().getContext().getEngine().getOrders().size() > 0
-					&& StateMachine.getInstance().getContext().getEngine().getOrders().get(0).getInstrument()
-							.equals(instrument)) {
-				Signal challenge = new Signal(instrument, StateMachine.getInstance().getContext().getEngine()
-						.getOrders().get(0).getAmount(), StateMachine.CLOSE);
-				challenge.setPeriod(StateMachine.getInstance().getPeriod(
-						StateMachine.getInstance().getContext().getEngine().getOrders().get(0)));
+    @Override
+    public boolean onLeaving() {
+        try {
+            Main.sendMail("Information during Panic", gatherInformation());
+        } catch (RobotException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.onLeaving();
+    }
 
-				double max = actual.getClose().getMax();
-				double act = 0;
-				if ( actual.isPanic() ) {
-					act = max;
-				}
-				challenge.setValue(act / max);
-				return challenge;
-			}
-		}
-		return null;
-	}
+    private String gatherInformation() {
+        return "no information";
+    }
 
-	@Override
-	public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
-			throws JFException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Signal getSignal(Instrument instrument, ITick tick, State actual) throws JFException {
+        if (actual.getInstruments().contains(instrument)) {
+            if (StateMachine.getInstance().getContext().getEngine().getOrders().size() > 0
+                    && StateMachine.getInstance().getContext().getEngine().getOrders().get(0).getInstrument()
+                    .equals(instrument)) {
+                Signal challenge = new Signal(instrument, StateMachine.getInstance().getContext().getEngine()
+                        .getOrders().get(0).getAmount(), StateMachine.CLOSE);
+                challenge.setPeriod(StateMachine.getInstance().getPeriod(
+                        StateMachine.getInstance().getContext().getEngine().getOrders().get(0)));
 
-	@Override
-	public double getAmount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+                double max = actual.getClose().getMax();
+                double act = 0;
+                if (actual.isPanic()) {
+                    act = max;
+                }
+                challenge.setValue(act / max);
+                return challenge;
+            }
+        }
+        return null;
+    }
 
-	public boolean canIExit() throws JFException {
-		if ( StateMachine.getInstance().getContext().getEngine().getOrders().size() == 0 ) {
-			logger.info("Manual close has happened ... I guess!");
-			return true;
-		}
-		double sum = 0;
-		double com = 0;
-		for ( IOrder order: StateMachine.getInstance().getContext().getEngine().getOrders() ) {
-			sum += order.getProfitLossInUSD();
-			com += order.getCommissionInUSD();
-		}
-		if ( sum > com ) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public Signal getSignal(Instrument instrument, Period period, IBar askBar, IBar bidBar, State actual)
+            throws JFException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public double getAmount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public boolean canIExit() throws JFException {
+        if (StateMachine.getInstance().getContext().getEngine().getOrders().size() == 0) {
+            logger.info("Manual close has happened ... I guess!");
+            return true;
+        }
+        double sum = 0;
+        double com = 0;
+        for (IOrder order : StateMachine.getInstance().getContext().getEngine().getOrders()) {
+            sum += order.getProfitLossInUSD();
+            com += order.getCommissionInUSD();
+        }
+        if (sum > com) {
+            return true;
+        }
+        return false;
+    }
 
 }

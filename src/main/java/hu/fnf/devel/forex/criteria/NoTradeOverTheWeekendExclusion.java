@@ -10,28 +10,28 @@ import com.dukascopy.api.IOrder;
 
 public class NoTradeOverTheWeekendExclusion extends OpenExclusionDecorator {
 
-	public NoTradeOverTheWeekendExclusion(Criterion criterion) {
-		super(criterion);
-	}
+    public NoTradeOverTheWeekendExclusion(Criterion criterion) {
+        super(criterion);
+    }
 
-	@Override
-	protected void check(Signal challenge) {
-		IContext context = StateMachine.getInstance().getContext();
-		try {
-			if (context.getDataService().isOfflineTime(
-					context.getHistory().getLastTick(challenge.getInstrument()).getTime())) {
-				if (context.getEngine().getOrders().size() != 0) {
-					logger.warn("It is not advides to have orders during weekend period.");
-					for (IOrder o : context.getEngine().getOrders()) {
-						logger.debug("#" + o.getId() + " - " + o.getInstrument() + " - $" + o.getProfitLossInUSD());
-					}
-				}
-				setExclusion();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    @Override
+    protected void check(Signal challenge) {
+        IContext context = StateMachine.getInstance().getContext();
+        try {
+            if (context.getDataService().isOfflineTime(
+                    context.getHistory().getLastTick(challenge.getInstrument()).getTime())) {
+                if (context.getEngine().getOrders().size() != 0) {
+                    logger.warn("It is not advides to have orders during weekend period.");
+                    for (IOrder o : context.getEngine().getOrders()) {
+                        logger.debug("#" + o.getId() + " - " + o.getInstrument() + " - $" + o.getProfitLossInUSD());
+                    }
+                }
+                setExclusion();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
 }
