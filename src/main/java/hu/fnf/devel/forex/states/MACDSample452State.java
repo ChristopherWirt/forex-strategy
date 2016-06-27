@@ -35,7 +35,7 @@ public class MACDSample452State extends State {
     private MACDSample452State() {
         super("MACDSample452State");
         /*
-		 * config
+		 * conf
 		 */
         this.instruments.add(Instrument.GBPJPY);
         this.instruments.add(Instrument.EURUSD);

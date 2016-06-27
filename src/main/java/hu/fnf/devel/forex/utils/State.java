@@ -38,10 +38,10 @@ public abstract class State {
 
     public Set<State> getNextStates() {
         Set<State> nextstates = new HashSet<State>();
-        String nexts = Main.getProperty("from." + getName());
+        String nexts = Main.conf.get("from." + getName());
         if (nexts == null) {
             /*
-			 * not listed in config
+			 * not listed in conf
 			 */
             return nextstates;
         }

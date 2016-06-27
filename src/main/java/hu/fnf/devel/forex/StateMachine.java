@@ -21,25 +21,23 @@ public class StateMachine implements IStrategy {
     public static final int UPDATE = 2;
     public static final int REMOVE = 3;
     public static final double BRAVE_VALUE = 0.6;
+    public static Map<IOrder, Integer> resubmitAttempts = new HashMap<IOrder, Integer>();
+
     private static final Logger logger = Logger.getLogger(StateMachine.class);
     private static final int maxOrderResubmitCount = 5;
-    public static Map<IOrder, Integer> resubmitAttempts = new HashMap<IOrder, Integer>();
     private static StateMachine instance;
     private static State state;
     private static State nextState;
     private static Set<State> allStates = new HashSet<State>();
     private static boolean stateLock = false;
+
     private IContext context;
     private double startBalance;
     private int startID;
     private Collection<IChart> charts = new ArrayList<IChart>();
     private JFrame gui;
 
- 	/*
-	 * THREAD SAFE!!!
-	 */
-
-    public synchronized static StateMachine getInstance() {
+ 	public synchronized static StateMachine getInstance() {
         if (instance == null) {
             instance = new StateMachine();
         }
@@ -123,26 +121,10 @@ public class StateMachine implements IStrategy {
 		 */
     }
 
-	/*
-	 * --------- END ---------
-	 */
-
-	/*
-	 * static
-	 */
 
     public static Set<State> getAllStates() {
         return allStates;
     }
-	
-	/*
-	 * private
-	 */
-	
-	
-	/*
-	 * public
-	 */
 
     public static State getNextState() {
         return nextState;
@@ -169,18 +151,18 @@ public class StateMachine implements IStrategy {
         this.gui = gui;
     }
 
-    public void stateTraversal(State s) {
-        if (s == null) {
+    public void stateTraversal(State state) {
+        if (state == null) {
             try {
-                s = StateMachine.getStateInstance(Main.getProperty("state.start"));
+                state = StateMachine.getStateInstance(Main.conf.getStartState());
             } catch (RobotException e) {
-                logger.fatal("No \"start.state\" defined or no state like \"" + Main.getProperty("state.start") + "\"");
+                logger.fatal("No \"start.state\" defined or no state like \"" + Main.conf.getStartState() + "\"");
                 return;
             }
         }
         Stack<State> todo = new Stack<State>();
         Stack<State> done = new Stack<State>();
-        todo.addAll(s.getNextStates());
+        todo.addAll(state.getNextStates());
         while (!todo.empty()) {
             State pick = todo.pop();
             if (!done.contains(pick)) {

@@ -16,7 +16,7 @@ import com.dukascopy.api.Period;
 
 public class MACDOpenCriterion extends OpenCriterionDecorator {
     /*
-     * config
+     * conf
      */
     private final double max = 1.0;
     private final double MACDOpenLevel = 5.0;

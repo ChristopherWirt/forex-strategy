@@ -16,7 +16,7 @@ import com.dukascopy.api.OfferSide;
 
 public class Scalp7Open extends OpenCriterionDecorator {
     /*
-     * config
+     * conf
      */
     private final double volativity = 5.5;
     private final int a = 50;

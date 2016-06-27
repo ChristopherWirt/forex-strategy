@@ -10,7 +10,7 @@ import com.dukascopy.api.JFException;
 
 public class MoneyManagementExclusion extends CloseExclusionDecorator {
     /*
-     * config
+     * conf
      */
     private final double revard = 0.3;
     private final double risk = -0.1;

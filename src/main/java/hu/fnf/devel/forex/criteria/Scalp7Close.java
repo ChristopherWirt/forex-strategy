@@ -15,7 +15,7 @@ import hu.fnf.devel.forex.utils.State;
 
 public class Scalp7Close extends CloseCriterionDecorator {
     /*
-     * config
+     * conf
      */
     private final double range = 8;
     private final double range_good = 20;

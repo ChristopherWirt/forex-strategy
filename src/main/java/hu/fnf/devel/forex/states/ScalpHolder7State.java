@@ -32,7 +32,7 @@ public class ScalpHolder7State extends State {
     private ScalpHolder7State() {
         super("ScalpHolder7State");
         /*
-		 * config
+		 * conf
 		 */
         this.instruments.add(Instrument.GBPJPY);
         this.instruments.add(Instrument.USDJPY);

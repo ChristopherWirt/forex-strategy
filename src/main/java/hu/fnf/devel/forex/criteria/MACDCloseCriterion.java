@@ -17,7 +17,7 @@ import com.dukascopy.api.Period;
 
 public class MACDCloseCriterion extends CloseCriterionDecorator {
     /*
-     * config
+     * conf
      */
     private double MACDCloseLevel = 2.0;
     int a = 12;

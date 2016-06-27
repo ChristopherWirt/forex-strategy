@@ -37,7 +37,7 @@ public class ThreeLittlePigsState extends State {
     private ThreeLittlePigsState() {
         super("ThreeLittlePigsState");
 		/*
-		 * config
+		 * conf
 		 */
         this.instruments.add(Instrument.GBPUSD);
         this.instruments.add(Instrument.USDJPY);

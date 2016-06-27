@@ -13,7 +13,7 @@ public class MarketOpenTimeExclusion extends OpenExclusionDecorator {
     String lastd;
     String lasti;
     /*
-     * config
+     * conf
      */
     private final Map<String, String> instStockMap = new HashMap<String, String>();
 

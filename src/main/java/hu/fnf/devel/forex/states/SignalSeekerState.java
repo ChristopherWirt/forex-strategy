@@ -32,7 +32,7 @@ public class SignalSeekerState extends State {
     private SignalSeekerState() {
         super("SignalSeekerState");
         /*
-		 * config
+		 * conf
 		 */
         // SignalSeeker has no criteria
         // SignalSeeker has no intruments
